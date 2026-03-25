@@ -1,0 +1,14 @@
+{
+  "name": "mjb-clickup-proxy",
+  "version": "1.0.0",
+  "description": "Proxy ClickUp pour Dashboard MJB Construct",
+  "main": "proxy-clickup.js",
+  "scripts": {
+    "start": "node proxy-clickup.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2"
+  }
+}
