@@ -375,7 +375,11 @@ a.link:hover { text-decoration: underline; }
       <div id="cu-status">🔴 <span style="color:var(--red);font-weight:600;font-size:12px">Déconnecté</span></div>
       <button class="cu-btn" onclick="CU.syncAll()">🔄 Sync tout</button>
       <span id="cu-last-sync" style="color:var(--text-muted);font-size:11px"></span>
-      <span style="color:var(--text-muted);font-size:12px;margin-left:auto">Proxy requis — <code style="background:var(--bg-muted);padding:1px 6px;border-radius:4px;font-size:11px">./start.sh</code></span>
+      <span style="color:var(--text-muted);font-size:12px;margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        IP Mac :
+        <input id="proxy-ip-input" type="text" placeholder="192.168.x.x" style="padding:3px 8px;font-size:12px;border:1px solid var(--border);border-radius:6px;width:120px;outline:none" onchange="CU.setProxyHost(this.value)">
+        <button class="cu-btn" onclick="CU.reconnect()">🔌 Connecter</button>
+      </span>
     </div>
     <!-- ═══ DASHBOARD ═══ -->
     <div id="page-dashboard" class="page" style="display:flex">
@@ -799,20 +803,47 @@ function timeAgo(ts) {
 // MODULE CU — MIROIR BIDIRECTIONNEL
 // ════════════════════════════════════════════════════════════
 const CU = {
-  base: 'http://localhost:3847/api',
+  get base() { return `http://${localStorage.getItem('mjb_proxy_host')||'localhost'}:3847/api`; },
   connected: false,
 
-  // ── Init : tente connexion, charge workspace ou cache ──────
+  setProxyHost(ip) {
+    ip = ip.trim();
+    if (ip) localStorage.setItem('mjb_proxy_host', ip);
+    else localStorage.removeItem('mjb_proxy_host');
+  },
+
+  async reconnect() {
+    this.connected = false;
+    setCuStatus('disconnected');
+    await this.init();
+  },
+
+  // ── Init : tente localhost puis IP Mac stockée ──────────────
   async init() {
-    try {
-      const r = await fetch(`${this.base}/health`, { signal: AbortSignal.timeout(2000) });
-      if (r.ok) {
-        this.connected = true;
-        setCuStatus('connected');
-        await this.loadWorkspace();
-        await this.flushRetryQueue();
-      } else { setCuStatus('disconnected'); this.renderFromCache(); }
-    } catch(e) { setCuStatus('disconnected'); this.renderFromCache(); }
+    // Pré-remplir le champ IP
+    const stored = localStorage.getItem('mjb_proxy_host') || '';
+    const inp = document.getElementById('proxy-ip-input');
+    if (inp) inp.value = stored;
+
+    // Tenter connexion
+    const hosts = ['localhost'];
+    if (stored && stored !== 'localhost') hosts.unshift(stored);
+    for (const host of hosts) {
+      try {
+        const r = await fetch(`http://${host}:3847/api/health`, { signal: AbortSignal.timeout(2000) });
+        if (r.ok) {
+          localStorage.setItem('mjb_proxy_host', host);
+          if (inp) inp.value = host;
+          this.connected = true;
+          setCuStatus('connected');
+          await this.loadWorkspace();
+          await this.flushRetryQueue();
+          return;
+        }
+      } catch(e) { /* essai suivant */ }
+    }
+    setCuStatus('disconnected');
+    this.renderFromCache();
   },
 
   // ── Charge toutes les listes du dossier Immobilier ─────────
