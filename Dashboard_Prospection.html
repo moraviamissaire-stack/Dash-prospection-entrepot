@@ -385,7 +385,7 @@ a.link:hover { text-decoration: underline; }
           <p>Vue d'ensemble de la prospection — mis à jour le 25 mars 2026</p>
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button onclick="CU.fetchTasks()" style="display:inline-flex;align-items:center;gap:6px;background:var(--blue-light);color:var(--blue);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;box-shadow:var(--shadow)">🔄 Sync ClickUp</button>
+          <button onclick="CU.syncAll()" style="display:inline-flex;align-items:center;gap:6px;background:var(--blue-light);color:var(--blue);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;box-shadow:var(--shadow)">🔄 Sync ClickUp</button>
           <a href="https://app.clickup.com/90151071241/v/o/f/901515248379?pr=90154145032" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--purple);color:white;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.15s;box-shadow:var(--shadow)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg> Ouvrir ClickUp</a>
         </div>
       </div>
@@ -1037,7 +1037,16 @@ function closeTaskModal() { document.getElementById('task-modal').style.display 
 async function confirmCreateTask() {
   const id   = parseInt(document.getElementById('modal-task-bien-id').value);
   const bien = biens.find(b => b.id === id);
-  if (bien) await CU.createTask(bien);
+  if (bien && CU.connected) {
+    try {
+      const r = await fetch(`${CU.base}/list/${CU_DEFAULT_FOLDER === '901515248379' ? '901522285748' : CU_DEFAULT_FOLDER}/task`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ name: `[${bien.type}] ${bien.loc} — ${bien.addr}`, description: `Surface: ${bien.surface}\nLoyer: ${bien.loyer}\nSource: ${bien.source}\n\n${bien.notes}` })
+      });
+      if (r.ok) { showToast('✅ Tâche créée dans ClickUp', 'success'); }
+      else { showToast('❌ Erreur création tâche', 'error'); }
+    } catch(e) { showToast('❌ Proxy non disponible', 'error'); }
+  }
   closeTaskModal();
 }
 
@@ -1092,7 +1101,7 @@ function setPipelineStage(id, stage, ev) {
   if (bien && CU.connected) {
     if (bien.clickup) {
       const taskId = bien.clickup.split('/t/')[1];
-      if (taskId) CU.updateTaskStatus(taskId, stage);
+      if (taskId) CU.setTaskStatus(taskId, stage, null, null);
     } else if (stage !== 'new') {
       showCreateTaskModal(bien);
     }
