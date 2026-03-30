@@ -376,8 +376,8 @@ a.link:hover { text-decoration: underline; }
       <button class="cu-btn" onclick="CU.syncAll()">🔄 Sync tout</button>
       <span id="cu-last-sync" style="color:var(--text-muted);font-size:11px"></span>
       <span style="color:var(--text-muted);font-size:12px;margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        IP Mac :
-        <input id="proxy-ip-input" type="text" placeholder="192.168.x.x" style="padding:3px 8px;font-size:12px;border:1px solid var(--border);border-radius:6px;width:120px;outline:none" onchange="CU.setProxyHost(this.value)">
+        Proxy :
+        <input id="proxy-ip-input" type="text" placeholder="192.168.x.x ou https://xxx.trycloudflare.com" style="padding:3px 8px;font-size:12px;border:1px solid var(--border);border-radius:6px;width:220px;outline:none" onchange="CU.setProxyHost(this.value)">
         <button class="cu-btn" onclick="CU.reconnect()">🔌 Connecter</button>
       </span>
     </div>
@@ -803,12 +803,16 @@ function timeAgo(ts) {
 // MODULE CU — MIROIR BIDIRECTIONNEL
 // ════════════════════════════════════════════════════════════
 const CU = {
-  get base() { return `http://${localStorage.getItem('mjb_proxy_host')||'localhost'}:3847/api`; },
+  get base() {
+    const h = localStorage.getItem('mjb_proxy_host') || 'localhost';
+    if (h.startsWith('http')) return `${h.replace(/\/$/, '')}/api`;
+    return `http://${h}:3847/api`;
+  },
   connected: false,
 
-  setProxyHost(ip) {
-    ip = ip.trim();
-    if (ip) localStorage.setItem('mjb_proxy_host', ip);
+  setProxyHost(val) {
+    val = val.trim();
+    if (val) localStorage.setItem('mjb_proxy_host', val);
     else localStorage.removeItem('mjb_proxy_host');
   },
 
