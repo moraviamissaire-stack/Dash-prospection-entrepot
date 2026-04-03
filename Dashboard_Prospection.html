@@ -112,20 +112,30 @@ a.link { color: var(--blue); text-decoration: none; font-weight: 500; }
 a.link:hover { text-decoration: underline; }
 
 /* Detail panel */
-.detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 50; backdrop-filter: blur(2px); }
+.detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; backdrop-filter: blur(3px); }
 .detail-overlay.open { display: block; }
-.detail-panel { position: fixed; right: 0; top: 0; width: 480px; height: 100vh; background: var(--bg); box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 51; padding: 28px; overflow-y: auto; transform: translateX(100%); transition: transform 0.25s ease; }
+.detail-panel { position: fixed; right: 0; top: 0; width: 500px; height: 100vh; background: var(--bg); box-shadow: -12px 0 40px rgba(0,0,0,0.15); z-index: 201; overflow-y: auto; transform: translateX(100%); transition: transform 0.28s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; }
 .detail-panel.open { transform: translateX(0); }
-.detail-close { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; border: none; background: var(--bg-muted); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.detail-close:hover { background: var(--border); }
-.detail-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; padding-right: 40px; }
-.detail-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
-.detail-section { margin-bottom: 20px; }
-.detail-section-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.detail-panel-header { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; gap: 10px; z-index: 1; flex-shrink: 0; }
+.detail-panel-nav { display: flex; gap: 6px; flex: 1; }
+.detail-nav-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; color: var(--text-secondary); background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; cursor: pointer; min-width: 0; max-width: 160px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; -webkit-tap-highlight-color: transparent; }
+.detail-nav-btn:disabled { opacity: 0.35; cursor: default; }
+.detail-nav-btn:not(:disabled):active { background: var(--border); }
+.detail-panel-counter { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.detail-close { width: 32px; height: 32px; border: none; background: var(--bg-muted); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+.detail-close:active { background: var(--border); }
+.detail-panel-body { padding: 22px 22px calc(22px + env(safe-area-inset-bottom, 0px)); flex: 1; }
+.detail-title { font-size: 20px; font-weight: 700; margin-bottom: 2px; line-height: 1.3; }
+.detail-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+.detail-section { margin-bottom: 22px; }
+.detail-section-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px; }
 .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.detail-item { }
-.detail-item label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 2px; }
-.detail-item span { font-size: 14px; font-weight: 500; color: var(--text); }
+.detail-item { background: var(--bg-subtle); border-radius: 8px; padding: 10px 12px; }
+.detail-item label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 3px; font-weight: 500; }
+.detail-item span { font-size: 14px; font-weight: 600; color: var(--text); }
+.detail-action-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; flex: 1; min-width: 140px; -webkit-tap-highlight-color: transparent; }
+.detail-notes-area { width: 100%; min-height: 90px; padding: 10px 12px; font-size: 13px; font-family: inherit; border: 1.5px solid var(--border); border-radius: 8px; background: var(--bg-subtle); color: var(--text); resize: vertical; outline: none; line-height: 1.6; box-sizing: border-box; transition: border-color 0.15s; }
+.detail-notes-area:focus { border-color: var(--blue); background: var(--bg); }
 
 /* Empty state */
 .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
@@ -189,14 +199,14 @@ a.link:hover { text-decoration: underline; }
   .sidebar { display: none; }
   .main { margin-left: 0; width: 100%; padding: 20px; }
   .mobile-nav { display: block; }
-  .detail-panel { width: 420px; }
+  .detail-panel { width: 440px; }
   .filters { gap: 8px; }
   #page-criteres > div { grid-template-columns: 1fr !important; }
   .main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (max-width: 768px) {
   .main { padding: 14px; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
-  .detail-panel { width: 100%; right: 0; padding: 20px; padding-top: env(safe-area-inset-top, 20px); }
+  .detail-panel { width: 100%; right: 0; }
   .page-header h2 { font-size: 20px; }
   .kpi-value { font-size: 26px; }
   .kpi-card { padding: 14px; }
@@ -655,8 +665,15 @@ a.link:hover { text-decoration: underline; }
 <!-- Detail Panel -->
 <div class="detail-overlay" id="detail-overlay" onclick="closeDetail()"></div>
 <div class="detail-panel" id="detail-panel">
-  <button class="detail-close" onclick="closeDetail()">✕</button>
-  <div id="detail-content"></div>
+  <div class="detail-panel-header">
+    <div class="detail-panel-nav">
+      <button class="detail-nav-btn" id="detail-prev-btn" onclick="navigateDetail(-1)" disabled>← —</button>
+      <button class="detail-nav-btn" id="detail-next-btn" onclick="navigateDetail(1)" disabled>— →</button>
+    </div>
+    <span class="detail-panel-counter" id="detail-counter"></span>
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-panel-body" id="detail-content"></div>
 </div>
 
 <script>
@@ -804,6 +821,11 @@ function timeAgo(ts) {
 // ════════════════════════════════════════════════════════════
 const CU = {
   get base() {
+    // Si la page est servie directement par le proxy (HTTP, pas GitHub Pages ni file://)
+    const origin = window.location.origin;
+    if (origin.startsWith('http') && !origin.includes('github.io') && !origin.startsWith('file:')) {
+      return `${origin}/api`;
+    }
     const h = localStorage.getItem('mjb_proxy_host') || 'localhost';
     if (h.startsWith('http')) return `${h.replace(/\/$/, '')}/api`;
     return `http://${h}:3847/api`;
@@ -829,7 +851,24 @@ const CU = {
     const inp = document.getElementById('proxy-ip-input');
     if (inp) inp.value = stored;
 
-    // Tenter connexion
+    // Tenter connexion — si la page est servie par le proxy, essayer d'abord l'origine courante
+    const origin = window.location.origin;
+    const servedFromProxy = origin.startsWith('http') && !origin.includes('github.io') && !origin.startsWith('file:');
+
+    if (servedFromProxy) {
+      try {
+        const r = await fetch(`${origin}/api/health`, { signal: AbortSignal.timeout(3000) });
+        if (r.ok) {
+          this.connected = true;
+          if (inp) inp.value = origin;
+          setCuStatus('connected');
+          await this.loadWorkspace();
+          await this.flushRetryQueue();
+          return;
+        }
+      } catch(e) { /* continue */ }
+    }
+
     const hosts = ['localhost'];
     if (stored && stored !== 'localhost') hosts.unshift(stored);
     for (const host of hosts) {
@@ -1176,7 +1215,12 @@ function buildSelectOptions(currentStage) {
   ).join('');
 }
 
+// Context courant pour navigation dans le panel
+let detailContext = [];
+let detailCurrentId = null;
+
 function renderBiens(list) {
+  detailContext = list;
   // ── Table (desktop) ──
   const tbody = document.getElementById('biens-body');
   tbody.innerHTML = list.map((b) => {
@@ -1435,52 +1479,110 @@ function searchBiens(q) {
 function openDetail(id) {
   const b = biens.find(x => x.id === id);
   if (!b) return;
+  detailCurrentId = id;
+
+  // Navigation
+  const idx = detailContext.findIndex(x => x.id === id);
+  const prev = idx > 0 ? detailContext[idx - 1] : null;
+  const next = idx < detailContext.length - 1 ? detailContext[idx + 1] : null;
+  const prevBtn = document.getElementById('detail-prev-btn');
+  const nextBtn = document.getElementById('detail-next-btn');
+  const counter = document.getElementById('detail-counter');
+  if (prevBtn) { prevBtn.textContent = prev ? `← ${prev.loc}` : '←'; prevBtn.disabled = !prev; if(prev) prevBtn.setAttribute('onclick', `openDetail(${prev.id})`); }
+  if (nextBtn) { nextBtn.textContent = next ? `${next.loc} →` : '→'; nextBtn.disabled = !next; if(next) nextBtn.setAttribute('onclick', `openDetail(${next.id})`); }
+  if (counter && detailContext.length > 1) counter.textContent = `${idx + 1} / ${detailContext.length}`;
+
+  const stage = pipeline[b.id] || 'new';
+  const stageInfo = STAGES[stage];
+  const localNotes = localStorage.getItem(`mjb_notes_${b.id}`);
+  const notes = localNotes !== null ? localNotes : (b.notes || '');
+
   document.getElementById('detail-content').innerHTML = `
-    <div class="detail-title">${b.addr}</div>
-    <div class="detail-subtitle">${b.loc} ${b.cp} · <span class="badge ${typeBadge(b.type)}">${b.typeFull}</span></div>
+    <!-- En-tête bien -->
+    <div style="padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:20px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <span class="badge ${typeBadge(b.type)}">${b.typeFull}</span>
+        <span class="badge ${badgeClass(b.statutLabel)}">${b.statutLabel}</span>
+        ${b.date ? `<span style="font-size:11px;color:var(--text-muted)">📅 ${b.date}</span>` : ''}
+      </div>
+      <div class="detail-title">${b.loc}</div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-top:4px">${b.addr}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px">CP ${b.cp} · ${b.source}</div>
+    </div>
+
+    <!-- Caractéristiques -->
     <div class="detail-section">
-      <div class="detail-section-title">Informations</div>
+      <div class="detail-section-title">Caractéristiques</div>
       <div class="detail-grid">
-        <div class="detail-item"><label>Surface</label><span>${b.surface}</span></div>
-        <div class="detail-item"><label>Loyer</label><span>${b.loyer}</span></div>
-        <div class="detail-item"><label>Hauteur</label><span>${b.hauteur}</span></div>
-        <div class="detail-item"><label>Accès PL</label><span>${b.acces}</span></div>
-        <div class="detail-item"><label>Source</label><span>${b.source}</span></div>
-        <div class="detail-item"><label>Date</label><span>${b.date}</span></div>
+        <div class="detail-item"><label>Surface</label><span>${b.surface || '—'}</span></div>
+        <div class="detail-item"><label>Loyer</label><span>${b.loyer || '—'}</span></div>
+        <div class="detail-item"><label>Hauteur libre</label><span>${b.hauteur && b.hauteur !== '—' ? b.hauteur : '—'}</span></div>
+        <div class="detail-item"><label>Accès PL / Autoroute</label><span>${b.acces || '—'}</span></div>
       </div>
     </div>
+
+    <!-- Étape pipeline -->
     <div class="detail-section">
-      <div class="detail-section-title">Statut</div>
-      <span class="badge ${badgeClass(b.statut)}" style="font-size:14px;padding:6px 16px">${b.statutLabel}</span>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">Pipeline</div>
-      <div style="margin-top:8px">
-        <div class="pipe-select">
-          <select class="${STAGES[pipeline[b.id] || 'new'].css}" onchange="setPipelineStage(${b.id}, this.value);openDetail(${b.id})" style="font-size:14px;padding:8px 32px 8px 14px">
-            ${buildSelectOptions(pipeline[b.id] || 'new')}
-          </select>
-        </div>
-        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
-          ${Object.entries(STAGES).map(([k,s]) => '<span style="font-size:11px;color:var(--text-muted);display:inline-flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:' + s.dot + ';display:inline-block"></span>' + s.label.replace(/^[^\s]+\s/, '') + '</span>').join(' ')}
-        </div>
+      <div class="detail-section-title">Étape pipeline</div>
+      <div class="pipe-select" style="margin-top:8px">
+        <select class="${stageInfo.css}" onchange="setPipelineStage(${b.id}, this.value, event);openDetail(${b.id})" style="font-size:14px;padding:10px 36px 10px 14px;width:100%;border-radius:8px">
+          ${buildSelectOptions(stage)}
+        </select>
       </div>
     </div>
-    ${b.clickup ? `<div class="detail-section"><div class="detail-section-title">ClickUp</div><a class="link" href="${b.clickup}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--purple-light);color:var(--purple);padding:8px 16px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg> Ouvrir dans ClickUp</a></div>` : ''}
-    ${b.lien ? `<div class="detail-section"><div class="detail-section-title">Lien annonce</div><a class="link" href="${b.lien}" target="_blank" style="word-break:break-all">${b.lien}</a></div>` : ''}
+
+    <!-- Notes éditables -->
     <div class="detail-section">
       <div class="detail-section-title">Notes</div>
-      <p style="font-size:14px;color:var(--text-secondary);line-height:1.6">${b.notes || 'Aucune note'}</p>
+      <textarea id="detail-notes-${b.id}" class="detail-notes-area" placeholder="Ajouter des notes sur ce bien...">${notes.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+      <button onclick="saveDetailNotes(${b.id})" style="margin-top:8px;padding:7px 16px;font-size:12px;font-weight:600;background:var(--blue);color:white;border:none;border-radius:7px;cursor:pointer;-webkit-tap-highlight-color:transparent">💾 Sauvegarder les notes</button>
     </div>
+
+    <!-- Actions -->
+    <div class="detail-section">
+      <div class="detail-section-title">Actions</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        ${b.lien ? `<a href="${b.lien}" target="_blank" class="detail-action-btn" style="background:var(--blue);color:white"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>Voir l'annonce</a>` : '<span style="font-size:12px;color:var(--text-muted);align-self:center">Pas d\'annonce enregistrée</span>'}
+        ${b.clickup ? `<a href="${b.clickup}" target="_blank" class="detail-action-btn" style="background:var(--purple-light);color:var(--purple);border:1px solid var(--purple)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>ClickUp</a>` : ''}
+      </div>
+    </div>
+
+    <!-- Créer tâche ClickUp si pas encore lié -->
+    ${!b.clickup ? `<div class="detail-section">
+      <button onclick="closeDetail();setTimeout(()=>{document.querySelector('[onclick*=\\"taskModal\\"]')?.click()},100)" style="width:100%;padding:10px;font-size:13px;font-weight:600;background:var(--bg-subtle);color:var(--text-secondary);border:1.5px dashed var(--border);border-radius:8px;cursor:pointer">+ Créer une tâche ClickUp pour ce bien</button>
+    </div>` : ''}
   `;
+
   document.getElementById('detail-overlay').classList.add('open');
   document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('detail-panel').scrollTop = 0;
 }
+
+function navigateDetail(dir) {
+  const idx = detailContext.findIndex(x => x.id === detailCurrentId);
+  const newIdx = idx + dir;
+  if (newIdx >= 0 && newIdx < detailContext.length) openDetail(detailContext[newIdx].id);
+}
+
+function saveDetailNotes(id) {
+  const ta = document.getElementById(`detail-notes-${id}`);
+  if (!ta) return;
+  localStorage.setItem(`mjb_notes_${id}`, ta.value);
+  showToast('Notes sauvegardées ✓', 'success');
+}
+
 function closeDetail() {
   document.getElementById('detail-overlay').classList.remove('open');
   document.getElementById('detail-panel').classList.remove('open');
+  detailCurrentId = null;
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDetail(); closeTaskModal(); } });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDetail(); closeTaskModal(); }
+  if (document.getElementById('detail-panel').classList.contains('open')) {
+    if (e.key === 'ArrowLeft') navigateDetail(-1);
+    if (e.key === 'ArrowRight') navigateDetail(1);
+  }
+});
 
 // Init
 // Récupère les task IDs créés manuellement via ClickUp depuis localStorage

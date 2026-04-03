@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
+const path    = require('path');
 
 const app     = express();
 const PORT    = 3847;
@@ -24,6 +25,9 @@ async function cu(path, opts = {}) {
   if (!res.ok) throw Object.assign(new Error(json.err || `HTTP ${res.status}`), { status: res.status });
   return json;
 }
+
+// ── Dashboard HTML (accès direct depuis iPhone via HTTP) ─────
+app.get('/', (_, res) => res.sendFile(path.join(__dirname, 'Dashboard_Prospection.html')));
 
 // ── Santé ────────────────────────────────────────────────────
 app.get('/api/health', (_, res) => res.json({ status: 'ok' }));
@@ -76,7 +80,8 @@ app.delete('/api/task/:id', async (req, res) => {
   catch (e) { res.status(e.status || 500).json({ error: e.message }); }
 });
 
-app.listen(PORT, () => {
-  console.log(`\n✅  Proxy ClickUp (mirror mode) → http://localhost:${PORT}`);
-  console.log(`   Ouvre Dashboard_Prospection.html dans ton navigateur\n`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n✅  Proxy ClickUp actif sur toutes les interfaces → port ${PORT}`);
+  console.log(`   Mac local   : http://localhost:${PORT}`);
+  console.log(`   iPhone/iPad : http://100.118.200.47:${PORT}  (via Tailscale)\n`);
 });
